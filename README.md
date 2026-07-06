@@ -1,6 +1,6 @@
 # next-template
 
-Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui, Vitest, ESLint + Prettier, and Husky pre-commit hooks — all pre-wired.
+Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui, Postgres + Drizzle, Better Auth (email/password login), Vitest, ESLint + Prettier, Husky pre-commit hooks, and Docker — all pre-wired.
 
 ## Stack
 
@@ -8,37 +8,82 @@ Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind
 - [TypeScript](https://www.typescriptlang.org) — strict mode
 - [Tailwind CSS](https://tailwindcss.com) v4
 - [shadcn/ui](https://ui.shadcn.com) — copy-in components (`npx shadcn@latest add <component>`)
+- [Postgres](https://www.postgresql.org) + [Drizzle ORM](https://orm.drizzle.team)
+- [Better Auth](https://www.better-auth.com) — email/password login, session cookies, `/dashboard` as a protected-route example
 - [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) — unit/component tests
 - ESLint + Prettier (with `prettier-plugin-tailwindcss`)
 - Husky + lint-staged — lint/format on commit
+- Docker + docker-compose — app and Postgres both containerized
 
-## Getting started
+## Getting started (Docker — recommended)
 
 ```bash
+cp .env.example .env
+# generate a real secret and drop it into .env as BETTER_AUTH_SECRET
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+docker compose up -d db          # start Postgres only
+npm run db:migrate               # apply schema (first time / after schema changes)
+docker compose up -d --build     # build and start the app too
+```
+
+App: [http://localhost:3000](http://localhost:3000). Postgres is exposed on host port `5455` by default (not `5432`, to avoid clashing with a local Postgres install — change `POSTGRES_PORT` in `.env` if needed).
+
+`npm run docker:up` / `npm run docker:down` are shortcuts for `docker compose up --build` / `docker compose down`.
+
+## Getting started (without Docker)
+
+Requires a Postgres instance reachable at `DATABASE_URL`.
+
+```bash
+cp .env.example .env   # point DATABASE_URL at your own Postgres
 npm install
+npm run db:migrate
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+## Auth
+
+Better Auth is wired with an email/password provider (`src/lib/auth.ts` server-side, `src/lib/auth-client.ts` client-side). Routes:
+
+- `/login`, `/register` — sign in / sign up forms
+- `/dashboard` — example protected page, redirects to `/login` if there's no session
+- `/api/auth/[...all]` — Better Auth's route handler
+
+## Database
+
+Schema lives in `src/db/schema.ts` (Drizzle). After changing it:
+
+```bash
+npm run db:generate   # generate a SQL migration from the schema
+npm run db:migrate    # apply migrations
+npm run db:studio     # browse data in Drizzle Studio
+```
 
 ## Scripts
 
-| Script                 | Purpose                 |
-| ---------------------- | ----------------------- |
-| `npm run dev`          | Start dev server        |
-| `npm run build`        | Production build        |
-| `npm start`            | Start production server |
-| `npm run lint`         | Run ESLint              |
-| `npm run format`       | Format with Prettier    |
-| `npm run format:check` | Check formatting        |
-| `npm test`             | Run tests once          |
-| `npm run test:watch`   | Run tests in watch mode |
+| Script                 | Purpose                             |
+| ---------------------- | ----------------------------------- |
+| `npm run dev`          | Start dev server                    |
+| `npm run build`        | Production build                    |
+| `npm start`            | Start production server             |
+| `npm run lint`         | Run ESLint                          |
+| `npm run format`       | Format with Prettier                |
+| `npm run format:check` | Check formatting                    |
+| `npm test`             | Run tests once                      |
+| `npm run test:watch`   | Run tests in watch mode             |
+| `npm run db:generate`  | Generate a migration from schema.ts |
+| `npm run db:migrate`   | Apply migrations                    |
+| `npm run db:studio`    | Open Drizzle Studio                 |
+| `npm run docker:up`    | `docker compose up --build`         |
+| `npm run docker:down`  | `docker compose down`               |
 
 ## Using this as a template
 
 1. Click "Use this template" on GitHub (or `npx degit brenoalvim/next-template my-app`)
 2. Update `package.json` name and this README
-3. `npm install && npm run dev`
+3. `cp .env.example .env`, set a real `BETTER_AUTH_SECRET`
+4. `docker compose up -d db && npm run db:migrate && npm run dev`
 
 ## Adding shadcn/ui components
 
