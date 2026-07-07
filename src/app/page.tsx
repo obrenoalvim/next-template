@@ -81,6 +81,13 @@ export default function Home() {
           </div>
         ))}
       </div>
+
+      <Link
+        href="/routes"
+        className="text-muted-foreground hover:text-foreground mt-12 text-sm underline"
+      >
+        See every page this template ships with →
+      </Link>
     </div>
   );
 }

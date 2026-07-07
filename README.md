@@ -55,6 +55,8 @@ Better Auth is wired with an email/password provider (`src/lib/auth.ts` server-s
 - `/login`, `/register` — sign in / sign up forms
 - `/dashboard` — example protected page, redirects to `/login` if there's no session
 - `/api/auth/[...all]` — Better Auth's route handler
+- Rate limited: 5 sign-in/sign-up attempts per 60s per IP (see `rateLimit` in `src/lib/auth.ts`)
+- `/routes` lists every page and API route in the template
 
 ## Database
 
