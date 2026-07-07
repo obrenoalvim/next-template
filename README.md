@@ -13,6 +13,9 @@ Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind
 - [next-themes](https://github.com/pacocoursey/next-themes) — light/dark toggle in the header
 - [Sonner](https://sonner.emilkowal.ski) — toast notifications for auth feedback
 - [Zod](https://zod.dev) — validates required env vars at startup (`src/lib/env.ts`), fails fast with a clear message instead of an obscure Postgres/auth error
+- [React Hook Form](https://react-hook-form.com) + Zod — schema-validated login/register forms (`src/lib/validations/auth.ts`)
+- `/api/health` — checks the database connection, used by `docker-compose.yml`'s app healthcheck
+- Custom `not-found.tsx` / `error.tsx`
 - [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) — unit/component tests
 - ESLint + Prettier (with `prettier-plugin-tailwindcss`)
 - Husky + lint-staged — lint/format on commit

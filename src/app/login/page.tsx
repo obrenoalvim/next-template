@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -10,20 +12,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { signIn } from "@/lib/auth-client";
+import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(values: LoginInput) {
     setLoading(true);
-
-    const { error } = await signIn.email({ email, password });
-
+    const { error } = await signIn.email(values);
     setLoading(false);
+
     if (error) {
       toast.error(error.message ?? "Could not sign in.");
       return;
@@ -47,7 +51,7 @@ export default function LoginPage() {
         </div>
 
         <Card className="shadow-lg">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <CardContent className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="email">Email</Label>
@@ -56,13 +60,17 @@ export default function LoginPage() {
                   <Input
                     id="email"
                     type="email"
-                    required
                     autoComplete="email"
                     className="pl-8"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    aria-invalid={!!errors.email}
+                    {...register("email")}
                   />
                 </div>
+                {errors.email ? (
+                  <p className="text-destructive text-sm">
+                    {errors.email.message}
+                  </p>
+                ) : null}
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="password">Password</Label>
@@ -71,13 +79,17 @@ export default function LoginPage() {
                   <Input
                     id="password"
                     type="password"
-                    required
                     autoComplete="current-password"
                     className="pl-8"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    aria-invalid={!!errors.password}
+                    {...register("password")}
                   />
                 </div>
+                {errors.password ? (
+                  <p className="text-destructive text-sm">
+                    {errors.password.message}
+                  </p>
+                ) : null}
               </div>
             </CardContent>
             <CardFooter className="flex-col gap-3 border-t-0 bg-transparent">

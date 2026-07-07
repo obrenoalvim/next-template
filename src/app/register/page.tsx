@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Lock, Mail, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -10,21 +12,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { signUp } from "@/lib/auth-client";
+import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterInput>({ resolver: zodResolver(registerSchema) });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(values: RegisterInput) {
     setLoading(true);
-
-    const { error } = await signUp.email({ name, email, password });
-
+    const { error } = await signUp.email(values);
     setLoading(false);
+
     if (error) {
       toast.error(error.message ?? "Could not create account.");
       return;
@@ -48,7 +51,7 @@ export default function RegisterPage() {
         </div>
 
         <Card className="shadow-lg">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <CardContent className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="name">Name</Label>
@@ -56,13 +59,17 @@ export default function RegisterPage() {
                   <UserIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
                   <Input
                     id="name"
-                    required
                     autoComplete="name"
                     className="pl-8"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    aria-invalid={!!errors.name}
+                    {...register("name")}
                   />
                 </div>
+                {errors.name ? (
+                  <p className="text-destructive text-sm">
+                    {errors.name.message}
+                  </p>
+                ) : null}
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="email">Email</Label>
@@ -71,13 +78,17 @@ export default function RegisterPage() {
                   <Input
                     id="email"
                     type="email"
-                    required
                     autoComplete="email"
                     className="pl-8"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    aria-invalid={!!errors.email}
+                    {...register("email")}
                   />
                 </div>
+                {errors.email ? (
+                  <p className="text-destructive text-sm">
+                    {errors.email.message}
+                  </p>
+                ) : null}
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="password">Password</Label>
@@ -86,14 +97,17 @@ export default function RegisterPage() {
                   <Input
                     id="password"
                     type="password"
-                    required
-                    minLength={8}
                     autoComplete="new-password"
                     className="pl-8"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    aria-invalid={!!errors.password}
+                    {...register("password")}
                   />
                 </div>
+                {errors.password ? (
+                  <p className="text-destructive text-sm">
+                    {errors.password.message}
+                  </p>
+                ) : null}
               </div>
             </CardContent>
             <CardFooter className="flex-col gap-3 border-t-0 bg-transparent">
