@@ -92,7 +92,7 @@ npm run db:studio     # browse data in Drizzle Studio
 
 ## Using this as a template
 
-1. Click "Use this template" on GitHub (or `npx degit brenoalvim/next-template my-app`)
+1. Click "Use this template" on GitHub (or `npx degit obrenoalvim/next-template my-app`)
 2. Update `package.json` name and this README
 3. `cp .env.example .env`, set a real `BETTER_AUTH_SECRET`
 4. `docker compose up -d db && npm run db:migrate && npm run dev`

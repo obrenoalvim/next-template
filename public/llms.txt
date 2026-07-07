@@ -6,7 +6,7 @@ This is a starter template repository, not a live product. It exists so a develo
 
 ## Docs
 
-- [README](https://github.com/brenoalvim/next-template/blob/master/README.md): stack overview, setup instructions (Docker and non-Docker), scripts, and how to use this as a template.
+- [README](https://github.com/obrenoalvim/next-template/blob/master/README.md): stack overview, setup instructions (Docker and non-Docker), scripts, and how to use this as a template.
 - [/routes](/routes): every page and API route this template ships with, with a one-line description of each.
 
 ## Stack

@@ -5,7 +5,7 @@ Contributions are welcome! Here's how to get started.
 ## Setup
 
 ```bash
-git clone https://github.com/brenoalvim/next-template.git
+git clone https://github.com/obrenoalvim/next-template.git
 cd next-template
 npm install
 npm run dev
