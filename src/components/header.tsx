@@ -32,7 +32,7 @@ export function Header() {
                 href="/account"
                 className="text-muted-foreground hover:text-foreground text-sm"
               >
-                {session.user.email}
+                {session.user.name.trim() || session.user.email}
               </Link>
               <Button
                 variant="outline"
