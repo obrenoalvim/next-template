@@ -18,6 +18,12 @@ const pages = [
     label: "Dashboard",
     description: "Protected page — redirects to /login without a session.",
   },
+  {
+    path: "/account",
+    label: "Account",
+    description:
+      "Protected page — update profile, change password, delete account.",
+  },
   { path: "/routes", label: "Routes", description: "This page." },
 ];
 

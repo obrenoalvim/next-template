@@ -25,9 +25,12 @@ export function Header() {
               <Link href="/dashboard" className="text-sm">
                 Dashboard
               </Link>
-              <span className="text-muted-foreground text-sm">
+              <Link
+                href="/account"
+                className="text-muted-foreground hover:text-foreground text-sm"
+              >
                 {session.user.email}
-              </span>
+              </Link>
               <Button
                 variant="outline"
                 size="sm"

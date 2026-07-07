@@ -17,6 +17,7 @@ Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind
 - `/api/health` — checks the database connection, used by `docker-compose.yml`'s app healthcheck
 - Custom `not-found.tsx` / `error.tsx`
 - [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) — unit/component tests
+- [Playwright](https://playwright.dev) — E2E: sign-up/sign-in/update-profile/delete-account (`e2e/auth.spec.ts`)
 - ESLint + Prettier (with `prettier-plugin-tailwindcss`)
 - Husky + lint-staged — lint/format on commit
 - Docker + docker-compose — app and Postgres both containerized
@@ -54,6 +55,7 @@ Better Auth is wired with an email/password provider (`src/lib/auth.ts` server-s
 
 - `/login`, `/register` — sign in / sign up forms
 - `/dashboard` — example protected page, redirects to `/login` if there's no session
+- `/account` — protected page: update name, change password, delete account
 - `/api/auth/[...all]` — Better Auth's route handler
 - Rate limited: 5 sign-in/sign-up attempts per 60s per IP (see `rateLimit` in `src/lib/auth.ts`)
 - `/routes` lists every page and API route in the template
@@ -80,6 +82,7 @@ npm run db:studio     # browse data in Drizzle Studio
 | `npm run format:check` | Check formatting                    |
 | `npm test`             | Run tests once                      |
 | `npm run test:watch`   | Run tests in watch mode             |
+| `npm run test:e2e`     | Run Playwright E2E tests            |
 | `npm run db:generate`  | Generate a migration from schema.ts |
 | `npm run db:migrate`   | Apply migrations                    |
 | `npm run db:studio`    | Open Drizzle Studio                 |
