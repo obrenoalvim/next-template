@@ -10,6 +10,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Build-time placeholders only — real values are injected at runtime by docker-compose.
+# Needed because route analysis at build time loads env-validated modules (db, auth).
+ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+ENV BETTER_AUTH_SECRET="build-time-placeholder-secret-not-used-at-runtime"
+ENV BETTER_AUTH_URL="http://localhost:3000"
+ENV NEXT_PUBLIC_BETTER_AUTH_URL="http://localhost:3000"
 RUN npm run build
 
 # --- runtime ---

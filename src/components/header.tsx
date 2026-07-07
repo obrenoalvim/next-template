@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { signOut, useSession } from "@/lib/auth-client";
 
 export function Header() {
@@ -17,6 +19,7 @@ export function Header() {
         </Link>
 
         <nav className="flex items-center gap-3">
+          <ThemeToggle />
           {isPending ? null : session ? (
             <>
               <Link href="/dashboard" className="text-sm">
@@ -30,6 +33,7 @@ export function Header() {
                 size="sm"
                 onClick={async () => {
                   await signOut();
+                  toast.success("Signed out.");
                   router.push("/");
                   router.refresh();
                 }}

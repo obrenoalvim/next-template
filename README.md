@@ -1,6 +1,6 @@
 # next-template
 
-Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui, Postgres + Drizzle, Better Auth (email/password login), Vitest, ESLint + Prettier, Husky pre-commit hooks, and Docker — all pre-wired.
+Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui, Postgres + Drizzle, Better Auth (email/password login), dark mode, toasts, validated env vars, Vitest, ESLint + Prettier, Husky pre-commit hooks, and Docker — all pre-wired.
 
 ## Stack
 
@@ -10,6 +10,9 @@ Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind
 - [shadcn/ui](https://ui.shadcn.com) — copy-in components (`npx shadcn@latest add <component>`)
 - [Postgres](https://www.postgresql.org) + [Drizzle ORM](https://orm.drizzle.team)
 - [Better Auth](https://www.better-auth.com) — email/password login, session cookies, `/dashboard` as a protected-route example
+- [next-themes](https://github.com/pacocoursey/next-themes) — light/dark toggle in the header
+- [Sonner](https://sonner.emilkowal.ski) — toast notifications for auth feedback
+- [Zod](https://zod.dev) — validates required env vars at startup (`src/lib/env.ts`), fails fast with a clear message instead of an obscure Postgres/auth error
 - [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) — unit/component tests
 - ESLint + Prettier (with `prettier-plugin-tailwindcss`)
 - Husky + lint-staged — lint/format on commit

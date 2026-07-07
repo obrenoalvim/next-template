@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CircleAlert, Lock, Mail, User as UserIcon } from "lucide-react";
+import { Lock, Mail, User as UserIcon } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,21 +16,20 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     const { error } = await signUp.email({ name, email, password });
 
     setLoading(false);
     if (error) {
-      setError(error.message ?? "Could not create account.");
+      toast.error(error.message ?? "Could not create account.");
       return;
     }
+    toast.success("Account created.");
     router.push("/dashboard");
     router.refresh();
   }
@@ -95,12 +95,6 @@ export default function RegisterPage() {
                   />
                 </div>
               </div>
-              {error ? (
-                <div className="border-destructive/50 bg-destructive/10 text-destructive flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
-                  <CircleAlert className="size-4 shrink-0" />
-                  <span>{error}</span>
-                </div>
-              ) : null}
             </CardContent>
             <CardFooter className="flex-col gap-3 border-t-0 bg-transparent">
               <Button type="submit" className="w-full" disabled={loading}>
