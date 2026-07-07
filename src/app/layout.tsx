@@ -16,9 +16,32 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const description =
+  "Base template: Next.js, auth, Postgres, and Docker pre-wired.";
+
 export const metadata: Metadata = {
-  title: "next-template",
-  description: "Base template: Next.js, auth, Postgres, and Docker pre-wired.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "next-template",
+    template: "%s | next-template",
+  },
+  description,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "next-template",
+    description,
+    url: siteUrl,
+    siteName: "next-template",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "next-template",
+    description,
+  },
 };
 
 export default function RootLayout({
@@ -33,6 +56,20 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "next-template",
+              applicationCategory: "DeveloperApplication",
+              operatingSystem: "Any",
+              description,
+              url: siteUrl,
+            }),
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

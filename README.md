@@ -21,6 +21,7 @@ Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind
 - ESLint + Prettier (with `prettier-plugin-tailwindcss`)
 - Husky + lint-staged — lint/format on commit
 - Docker + docker-compose — app and Postgres both containerized
+- SEO: `robots.ts`, `sitemap.ts`, OG/Twitter meta, JSON-LD, canonical URLs, and `public/llms.txt`
 
 ## Getting started (Docker — recommended)
 
@@ -95,6 +96,10 @@ npm run db:studio     # browse data in Drizzle Studio
 2. Update `package.json` name and this README
 3. `cp .env.example .env`, set a real `BETTER_AUTH_SECRET`
 4. `docker compose up -d db && npm run db:migrate && npm run dev`
+
+## SEO
+
+`src/app/layout.tsx` sets `metadataBase`, OpenGraph/Twitter tags, and a JSON-LD block, all derived from `NEXT_PUBLIC_SITE_URL` (defaults to `http://localhost:3000`, set it to your real domain in production). `src/app/robots.ts` and `src/app/sitemap.ts` are Next.js metadata routes — add new public pages to the `routes` array in `sitemap.ts`. `public/llms.txt` gives AI agents/IDE tools a short, structured summary of the project.
 
 ## Adding shadcn/ui components
 

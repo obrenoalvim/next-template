@@ -1,0 +1,18 @@
+# next-template
+
+> Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui, Postgres + Drizzle, Better Auth, and Docker — pre-wired so a new project skips setup and starts building.
+
+This is a starter template repository, not a live product. It exists so a developer can clone it and get a working auth + database + Docker stack immediately.
+
+## Docs
+
+- [README](https://github.com/brenoalvim/next-template/blob/master/README.md): stack overview, setup instructions (Docker and non-Docker), scripts, and how to use this as a template.
+- [/routes](/routes): every page and API route this template ships with, with a one-line description of each.
+
+## Stack
+
+- Next.js 16 (App Router, Turbopack), TypeScript, Tailwind CSS v4, shadcn/ui
+- Postgres + Drizzle ORM, Better Auth (email/password, rate limited)
+- Dark mode (next-themes), toasts (Sonner), env var validation (Zod)
+- Vitest + Testing Library for unit tests, Playwright for E2E
+- Docker + docker-compose (app and Postgres both containerized), GitHub Actions CI
