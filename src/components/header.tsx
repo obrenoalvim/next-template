@@ -25,6 +25,9 @@ export function Header() {
               <Link href="/dashboard" className="text-sm">
                 Dashboard
               </Link>
+              <Link href="/notes" className="text-sm">
+                Notes
+              </Link>
               <Link
                 href="/account"
                 className="text-muted-foreground hover:text-foreground text-sm"

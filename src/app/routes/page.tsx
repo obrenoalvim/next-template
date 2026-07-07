@@ -24,6 +24,12 @@ const pages = [
     description:
       "Protected page — update profile, change password, delete account.",
   },
+  {
+    path: "/notes",
+    label: "Notes",
+    description:
+      "Protected page — example CRUD resource (schema, API route, api-client, TanStack Query/Table).",
+  },
   { path: "/routes", label: "Routes", description: "This page." },
 ];
 
@@ -37,6 +43,14 @@ const apiRoutes = [
     path: "/api/health",
     description:
       "Checks the database connection. Used by the Docker healthcheck.",
+  },
+  {
+    path: "/api/notes",
+    description: "GET/POST notes for the current user.",
+  },
+  {
+    path: "/api/notes/[id]",
+    description: "DELETE a note owned by the current user.",
   },
 ];
 

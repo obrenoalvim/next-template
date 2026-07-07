@@ -17,7 +17,7 @@ Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind
 - `/api/health` — checks the database connection, used by `docker-compose.yml`'s app healthcheck
 - Custom `not-found.tsx` / `error.tsx`
 - [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) — unit/component tests
-- [Playwright](https://playwright.dev) — E2E: sign-up/sign-in/update-profile/delete-account (`e2e/auth.spec.ts`)
+- [Playwright](https://playwright.dev) — E2E: auth flow (`e2e/auth.spec.ts`) and the notes CRUD example (`e2e/notes.spec.ts`)
 - [Pino](https://getpino.io) — structured server-side logging (`src/lib/logger.ts`), pretty in dev, JSON in prod
 - `src/lib/api-client.ts` — typed fetch wrapper (`api.get/post/put/patch/delete`) for the app's own `/api/*` routes, one `ApiError` shape instead of scattered try/catch
 - [TanStack Query](https://tanstack.com/query) — cache/loading/retry for client-side data fetching (`src/components/query-provider.tsx`), see `HealthStatus` on `/dashboard` for a working example
@@ -63,6 +63,7 @@ Better Auth is wired with an email/password provider (`src/lib/auth.ts` server-s
 - `/api/auth/[...all]` — Better Auth's route handler
 - Rate limited: 5 sign-in/sign-up attempts per 60s per IP (see `rateLimit` in `src/lib/auth.ts`)
 - `/routes` lists every page and API route in the template
+- `src/proxy.ts` (Next.js 16's replacement for `middleware.ts`) centrally protects `/dashboard`, `/account`, `/notes` — add a path to `protectedPaths` and it's covered, no per-page redirect needed. It's an optimistic cookie check for UX; pages still call `auth.api.getSession()` server-side as the real gate.
 
 ## Database
 
@@ -109,6 +110,10 @@ npm run db:studio     # browse data in Drizzle Studio
 - **Server-side**: use `logger` from `src/lib/logger.ts` in route handlers, server actions, or anywhere you'd otherwise `console.log`. Prints readable in `npm run dev`, structured JSON in Docker/prod (`docker compose logs app`). Level via `LOG_LEVEL` (default `info`). Better Auth's internal logs are routed through it too.
 - **Client-side requests to your own API**: use `api` from `src/lib/api-client.ts` (`api.get<T>(path, options)`, `api.post<T>(path, body)`, etc.) instead of raw `fetch`. Failures throw a single `ApiError` with `.status` and `.body`.
 - **Data fetching with cache/loading/retry**: wrap `api-client` calls in a `useQuery`/`useMutation` from TanStack Query (already mounted via `QueryProvider` in the root layout) rather than rolling your own loading state. `src/components/health-status.tsx` is a working example — copy its shape for new data.
+
+## Example CRUD resource
+
+`/notes` (`src/app/notes`, `src/app/api/notes`) is a full reference implementation of the schema → API route → `api-client` → TanStack Query/Table pattern: a Drizzle table owned by the current user, a Zod-validated API route, and a client view with create/sort/delete. Copy this shape for your first real feature, then delete `/notes` (and drop the `note` table from `src/db/schema.ts` + generate a migration) once you don't need the reference.
 
 ## Adding shadcn/ui components
 
