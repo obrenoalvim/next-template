@@ -1,3 +1,5 @@
+English | [Português](README.pt.md)
+
 # next-template
 
 Production-ready base template for new projects: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui, Postgres + Drizzle, Better Auth (email/password, email verification, password reset, rate limiting), i18n, dark mode, structured logging, and Docker — all pre-wired and tested end to end. Clone it, run one command, start building your first feature instead of your fifth auth integration.
