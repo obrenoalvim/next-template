@@ -18,6 +18,9 @@ Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind
 - Custom `not-found.tsx` / `error.tsx`
 - [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) — unit/component tests
 - [Playwright](https://playwright.dev) — E2E: sign-up/sign-in/update-profile/delete-account (`e2e/auth.spec.ts`)
+- [Pino](https://getpino.io) — structured server-side logging (`src/lib/logger.ts`), pretty in dev, JSON in prod
+- `src/lib/api-client.ts` — typed fetch wrapper (`api.get/post/put/patch/delete`) for the app's own `/api/*` routes, one `ApiError` shape instead of scattered try/catch
+- [TanStack Query](https://tanstack.com/query) — cache/loading/retry for client-side data fetching (`src/components/query-provider.tsx`), see `HealthStatus` on `/dashboard` for a working example
 - ESLint + Prettier (with `prettier-plugin-tailwindcss`)
 - Husky + lint-staged — lint/format on commit
 - Docker + docker-compose — app and Postgres both containerized
@@ -100,6 +103,12 @@ npm run db:studio     # browse data in Drizzle Studio
 ## SEO
 
 `src/app/layout.tsx` sets `metadataBase`, OpenGraph/Twitter tags, and a JSON-LD block, all derived from `NEXT_PUBLIC_SITE_URL` (defaults to `http://localhost:3000`, set it to your real domain in production). `src/app/robots.ts` and `src/app/sitemap.ts` are Next.js metadata routes — add new public pages to the `routes` array in `sitemap.ts`. `public/llms.txt` gives AI agents/IDE tools a short, structured summary of the project.
+
+## Requests and logging
+
+- **Server-side**: use `logger` from `src/lib/logger.ts` in route handlers, server actions, or anywhere you'd otherwise `console.log`. Prints readable in `npm run dev`, structured JSON in Docker/prod (`docker compose logs app`). Level via `LOG_LEVEL` (default `info`). Better Auth's internal logs are routed through it too.
+- **Client-side requests to your own API**: use `api` from `src/lib/api-client.ts` (`api.get<T>(path, options)`, `api.post<T>(path, body)`, etc.) instead of raw `fetch`. Failures throw a single `ApiError` with `.status` and `.body`.
+- **Data fetching with cache/loading/retry**: wrap `api-client` calls in a `useQuery`/`useMutation` from TanStack Query (already mounted via `QueryProvider` in the root layout) rather than rolling your own loading state. `src/components/health-status.tsx` is a working example — copy its shape for new data.
 
 ## Adding shadcn/ui components
 

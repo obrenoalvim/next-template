@@ -3,10 +3,16 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
 
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
+  logger: {
+    log: (level, message, ...args) => {
+      logger[level]({ args }, message);
+    },
+  },
   database: drizzleAdapter(db, {
     provider: "pg",
     schema,

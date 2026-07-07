@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { HealthStatus } from "@/components/health-status";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -15,6 +16,9 @@ export default async function DashboardPage() {
       <p className="text-muted-foreground mt-2">
         Signed in as {session.user.email}.
       </p>
+      <div className="mt-4">
+        <HealthStatus />
+      </div>
     </div>
   );
 }
