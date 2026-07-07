@@ -1,11 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 
 type HealthResponse = { status: "ok" | "error"; database: "up" | "down" };
 
 export function HealthStatus() {
+  const t = useTranslations("dashboard");
   const { data, isPending } = useQuery({
     queryKey: ["health"],
     queryFn: () => api.get<HealthResponse>("/api/health"),
@@ -15,7 +17,7 @@ export function HealthStatus() {
   if (isPending) {
     return (
       <span className="text-muted-foreground text-sm">
-        Checking database...
+        {t("checkingDatabase")}
       </span>
     );
   }
@@ -27,7 +29,7 @@ export function HealthStatus() {
       <span
         className={`size-2 rounded-full ${up ? "bg-emerald-500" : "bg-destructive"}`}
       />
-      Database {up ? "up" : "down"}
+      {up ? t("databaseUp") : t("databaseDown")}
     </span>
   );
 }

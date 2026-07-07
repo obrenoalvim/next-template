@@ -1,6 +1,6 @@
 # next-template
 
-Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui, Postgres + Drizzle, Better Auth (email/password login), dark mode, toasts, validated env vars, Vitest, ESLint + Prettier, Husky pre-commit hooks, and Docker — all pre-wired.
+Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui, Postgres + Drizzle, Better Auth (email/password login, email verification, password reset), i18n, dark mode, toasts, validated env vars, Vitest, ESLint + Prettier, Husky pre-commit hooks, and Docker — all pre-wired.
 
 ## Stack
 
@@ -17,10 +17,12 @@ Base template for future projects: Next.js 16 (App Router), TypeScript, Tailwind
 - `/api/health` — checks the database connection, used by `docker-compose.yml`'s app healthcheck
 - Custom `not-found.tsx` / `error.tsx`
 - [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) — unit/component tests
-- [Playwright](https://playwright.dev) — E2E: auth flow (`e2e/auth.spec.ts`) and the notes CRUD example (`e2e/notes.spec.ts`)
+- [Playwright](https://playwright.dev) — E2E: auth flow, the notes CRUD example, and locale switching (`e2e/*.spec.ts`)
 - [Pino](https://getpino.io) — structured server-side logging (`src/lib/logger.ts`), pretty in dev, JSON in prod
 - `src/lib/api-client.ts` — typed fetch wrapper (`api.get/post/put/patch/delete`) for the app's own `/api/*` routes, one `ApiError` shape instead of scattered try/catch
 - [TanStack Query](https://tanstack.com/query) — cache/loading/retry for client-side data fetching (`src/components/query-provider.tsx`), see `HealthStatus` on `/dashboard` for a working example
+- [next-intl](https://next-intl.dev) — i18n: `en` (default, unprefixed) + `pt`, locale switcher in the header (`src/i18n/`, `messages/*.json`)
+- Email (verification + password reset) via Gmail SMTP app passwords, with a console fallback in dev (`src/lib/email.ts`)
 - ESLint + Prettier (with `prettier-plugin-tailwindcss`)
 - Husky + lint-staged — lint/format on commit
 - Docker + docker-compose — app and Postgres both containerized
@@ -58,12 +60,21 @@ npm run dev
 Better Auth is wired with an email/password provider (`src/lib/auth.ts` server-side, `src/lib/auth-client.ts` client-side). Routes:
 
 - `/login`, `/register` — sign in / sign up forms
+- `/forgot-password`, `/reset-password` — email-based password reset (see [Email](#email))
 - `/dashboard` — example protected page, redirects to `/login` if there's no session
 - `/account` — protected page: update name, change password, delete account
 - `/api/auth/[...all]` — Better Auth's route handler
 - Rate limited: 5 sign-in/sign-up attempts per 60s per IP (see `rateLimit` in `src/lib/auth.ts`)
 - `/routes` lists every page and API route in the template
-- `src/proxy.ts` (Next.js 16's replacement for `middleware.ts`) centrally protects `/dashboard`, `/account`, `/notes` — add a path to `protectedPaths` and it's covered, no per-page redirect needed. It's an optimistic cookie check for UX; pages still call `auth.api.getSession()` server-side as the real gate.
+- `src/proxy.ts` (Next.js 16's replacement for `middleware.ts`) centrally protects `/dashboard`, `/account`, `/notes` — add a path to `protectedPaths` and it's covered, no per-page redirect needed. It's an optimistic cookie check for UX; pages still call `auth.api.getSession()` server-side as the real gate. It also runs next-intl's locale middleware.
+
+## Email
+
+Verification emails (sent on sign-up) and password-reset emails go through Gmail SMTP via `src/lib/email.ts` + `src/lib/email-templates.ts`. Without `GMAIL_USER`/`GMAIL_APP_PASSWORD` set, emails are logged to the console (`docker compose logs app`) instead of sent — no setup required to try the flow locally. To send real emails: enable 2FA on a Gmail account, generate an [App Password](https://myaccount.google.com/apppasswords), and set both env vars.
+
+## i18n
+
+Locales live in `messages/en.json` and `messages/pt.json`; routing config is in `src/i18n/routing.ts` (add a locale to the `locales` array and drop in a matching `messages/<code>.json`). `en` is the default and unprefixed (`/login`), other locales are prefixed (`/pt/login`) — see `localePrefix: "as-needed"` in `src/i18n/routing.ts`. Server components use `getTranslations`/`setRequestLocale` from `next-intl/server`; client components use `useTranslations`. Always import `Link`/`redirect`/`useRouter` from `@/i18n/navigation`, not `next/link` or `next/navigation`, so links stay locale-aware. `src/components/locale-switcher.tsx` is the header's language toggle.
 
 ## Database
 
@@ -113,7 +124,7 @@ npm run db:studio     # browse data in Drizzle Studio
 
 ## Example CRUD resource
 
-`/notes` (`src/app/notes`, `src/app/api/notes`) is a full reference implementation of the schema → API route → `api-client` → TanStack Query/Table pattern: a Drizzle table owned by the current user, a Zod-validated API route, and a client view with create/sort/delete. Copy this shape for your first real feature, then delete `/notes` (and drop the `note` table from `src/db/schema.ts` + generate a migration) once you don't need the reference.
+`/notes` (`src/app/[locale]/notes`, `src/app/api/notes`) is a full reference implementation of the schema → API route → `api-client` → TanStack Query/Table pattern: a Drizzle table owned by the current user, a Zod-validated API route, and a client view with create/sort/delete. Copy this shape for your first real feature, then delete `/notes` (and drop the `note` table from `src/db/schema.ts` + generate a migration) once you don't need the reference.
 
 ## Adding shadcn/ui components
 

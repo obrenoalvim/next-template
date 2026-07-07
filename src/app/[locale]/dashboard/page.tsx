@@ -1,20 +1,23 @@
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
+import { redirect } from "@/i18n/navigation";
 import { HealthStatus } from "@/components/health-status";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
-    redirect("/login");
+    redirect({ href: "/login", locale: await getLocale() });
   }
+
+  const t = await getTranslations("dashboard");
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-16">
-      <h1 className="text-2xl font-semibold">Dashboard</h1>
+      <h1 className="text-2xl font-semibold">{t("title")}</h1>
       <p className="text-muted-foreground mt-2">
-        Signed in as {session.user.email}.
+        {t("signedInAs", { email: session!.user.email })}
       </p>
       <div className="mt-4">
         <HealthStatus />

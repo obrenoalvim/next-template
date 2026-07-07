@@ -1,38 +1,53 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { signIn } from "@/lib/auth-client";
-import { loginSchema, type LoginInput } from "@/lib/validations/auth";
+import { Link, useRouter } from "@/i18n/navigation";
+import { signUp } from "@/lib/auth-client";
+import {
+  createRegisterSchema,
+  type RegisterInput,
+} from "@/lib/validations/auth";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
+  const t = useTranslations("auth.register");
+  const tv = useTranslations("auth.validation");
   const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
+  } = useForm<RegisterInput>({
+    resolver: zodResolver(
+      createRegisterSchema({
+        nameRequired: tv("nameRequired"),
+        emailRequired: tv("emailRequired"),
+        emailInvalid: tv("emailInvalid"),
+        passwordRequired: "",
+        passwordMin: tv("passwordMin"),
+      })
+    ),
+  });
 
-  async function onSubmit(values: LoginInput) {
+  async function onSubmit(values: RegisterInput) {
     setLoading(true);
-    const { error } = await signIn.email(values);
+    const { error } = await signUp.email(values);
     setLoading(false);
 
     if (error) {
-      toast.error(error.message ?? "Could not sign in.");
+      toast.error(error.message ?? t("genericError"));
       return;
     }
-    toast.success("Signed in.");
+    toast.success(t("success"));
     router.push("/dashboard");
     router.refresh();
   }
@@ -42,19 +57,35 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-6 flex flex-col items-center gap-2 text-center">
           <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-xl">
-            <Lock className="size-5" />
+            <UserIcon className="size-5" />
           </div>
-          <h1 className="text-xl font-semibold">Welcome back</h1>
-          <p className="text-muted-foreground text-sm">
-            Sign in to your account to continue
-          </p>
+          <h1 className="text-xl font-semibold">{t("title")}</h1>
+          <p className="text-muted-foreground text-sm">{t("subtitle")}</p>
         </div>
 
         <Card className="shadow-lg">
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <CardContent className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="name">{t("name")}</Label>
+                <div className="relative">
+                  <UserIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
+                  <Input
+                    id="name"
+                    autoComplete="name"
+                    className="pl-8"
+                    aria-invalid={!!errors.name}
+                    {...register("name")}
+                  />
+                </div>
+                {errors.name ? (
+                  <p className="text-destructive text-sm">
+                    {errors.name.message}
+                  </p>
+                ) : null}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="email">{t("email")}</Label>
                 <div className="relative">
                   <Mail className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
                   <Input
@@ -73,13 +104,13 @@ export default function LoginPage() {
                 ) : null}
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t("password")}</Label>
                 <div className="relative">
                   <Lock className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
                   <Input
                     id="password"
                     type="password"
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                     className="pl-8"
                     aria-invalid={!!errors.password}
                     {...register("password")}
@@ -94,12 +125,12 @@ export default function LoginPage() {
             </CardContent>
             <CardFooter className="flex-col gap-3 border-t-0 bg-transparent">
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Signing in..." : "Sign in"}
+                {loading ? t("submitting") : t("submit")}
               </Button>
               <p className="text-muted-foreground text-sm">
-                No account?{" "}
-                <Link href="/register" className="text-foreground underline">
-                  Sign up
+                {t("haveAccount")}{" "}
+                <Link href="/login" className="text-foreground underline">
+                  {t("signIn")}
                 </Link>
               </p>
             </CardFooter>

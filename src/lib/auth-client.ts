@@ -12,4 +12,6 @@ export const {
   updateUser,
   changePassword,
   deleteUser,
+  requestPasswordReset,
+  resetPassword,
 } = authClient;

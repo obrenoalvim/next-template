@@ -1,0 +1,202 @@
+{
+  "metadata": {
+    "title": "next-template",
+    "description": "Base template: Next.js, auth, Postgres, and Docker pre-wired."
+  },
+  "nav": {
+    "brand": "next-template",
+    "dashboard": "Dashboard",
+    "notes": "Notes",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "signedOut": "Signed out."
+  },
+  "footer": {
+    "github": "GitHub"
+  },
+  "home": {
+    "badge": "Base template",
+    "title": "next-template",
+    "subtitle": "A pre-wired starting point for new projects: auth, a real database, and Docker already configured so you can skip the setup and start building.",
+    "getStarted": "Get started",
+    "signIn": "Sign in",
+    "seeRoutes": "See every page this template ships with →",
+    "features": {
+      "auth": {
+        "title": "Auth built in",
+        "description": "Email/password login with Better Auth, sessions, and a protected route example."
+      },
+      "database": {
+        "title": "Real database",
+        "description": "Postgres + Drizzle ORM, schema and migrations ready to extend."
+      },
+      "docker": {
+        "title": "Runs in Docker",
+        "description": "App and database both containerized — clone, migrate, and go."
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your account to continue",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "noAccount": "No account?",
+      "signUp": "Sign up",
+      "success": "Signed in.",
+      "genericError": "Could not sign in."
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "It only takes a minute to get started",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign up",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "success": "Account created.",
+      "genericError": "Could not create account."
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "subtitle": "We'll email you a link to reset it.",
+      "email": "Email",
+      "submit": "Send reset link",
+      "submitting": "Sending...",
+      "sent": "If that email exists, a reset link is on its way. Check your inbox.",
+      "backToSignIn": "Back to sign in",
+      "genericError": "Could not send reset email."
+    },
+    "resetPassword": {
+      "title": "Reset password",
+      "subtitle": "Choose a new password for your account.",
+      "newPassword": "New password",
+      "submit": "Reset password",
+      "submitting": "Resetting...",
+      "success": "Password reset. Sign in with your new password.",
+      "invalidToken": "This reset link is invalid or expired.",
+      "requestNew": "Request a new one",
+      "missingToken": "Missing or invalid reset token.",
+      "genericError": "Could not reset password."
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 8 characters"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "signedInAs": "Signed in as {email}.",
+    "checkingDatabase": "Checking database...",
+    "databaseUp": "Database up",
+    "databaseDown": "Database down"
+  },
+  "account": {
+    "title": "Account",
+    "subtitle": "Manage your profile, password, and account.",
+    "profile": {
+      "title": "Profile",
+      "name": "Name",
+      "save": "Save",
+      "saving": "Saving...",
+      "success": "Profile updated.",
+      "genericError": "Could not update profile."
+    },
+    "password": {
+      "title": "Password",
+      "subtitle": "Changing your password signs you out of other sessions.",
+      "current": "Current password",
+      "new": "New password",
+      "submit": "Change password",
+      "submitting": "Changing...",
+      "success": "Password changed.",
+      "genericError": "Could not change password."
+    },
+    "danger": {
+      "title": "Delete account",
+      "subtitle": "This permanently deletes your account. There is no undo.",
+      "password": "Password",
+      "submit": "Delete account",
+      "submitting": "Deleting...",
+      "success": "Account deleted.",
+      "genericError": "Could not delete account."
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "currentPasswordRequired": "Current password is required",
+      "passwordMin": "Password must be at least 8 characters",
+      "passwordRequired": "Password is required"
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "Example CRUD resource — schema, API route, api-client, and TanStack Query/Table wired together. Delete this page once you don't need the reference anymore.",
+    "newNote": "New note",
+    "titleLabel": "Title",
+    "contentLabel": "Content",
+    "add": "Add note",
+    "adding": "Adding...",
+    "created": "Note created.",
+    "createError": "Could not create note.",
+    "deleted": "Note deleted.",
+    "deleteError": "Could not delete note.",
+    "deleteAria": "Delete note",
+    "columnTitle": "Title",
+    "columnContent": "Content",
+    "columnCreated": "Created",
+    "loading": "Loading...",
+    "empty": "No notes yet.",
+    "validation": {
+      "titleRequired": "Title is required",
+      "contentRequired": "Content is required"
+    }
+  },
+  "routes": {
+    "title": "Routes",
+    "subtitle": "Every page and API route this template ships with.",
+    "pagesHeading": "Pages",
+    "apiHeading": "API routes",
+    "labels": {
+      "home": "Home",
+      "login": "Sign in",
+      "register": "Sign up",
+      "forgotPassword": "Forgot password",
+      "resetPassword": "Reset password",
+      "dashboard": "Dashboard",
+      "account": "Account",
+      "notes": "Notes",
+      "routes": "Routes"
+    },
+    "thisPage": "This page.",
+    "home": "Landing page with the stack overview and get-started/sign-in CTAs.",
+    "login": "Email/password login form.",
+    "register": "Create an account.",
+    "forgotPassword": "Request a password reset email.",
+    "resetPassword": "Set a new password from the emailed reset link (?token=).",
+    "dashboard": "Protected page — redirects to /login without a session.",
+    "account": "Protected page — update profile, change password, delete account.",
+    "notes": "Protected page — example CRUD resource (schema, API route, api-client, TanStack Query/Table)."
+  },
+  "notFound": {
+    "label": "404",
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or was moved.",
+    "backHome": "Back home"
+  },
+  "error": {
+    "label": "Error",
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Try again, or head back home.",
+    "retry": "Try again"
+  }
+}

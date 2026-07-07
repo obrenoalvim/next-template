@@ -1,37 +1,41 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
-const pages = [
-  {
-    path: "/",
-    label: "Home",
-    description:
-      "Landing page with the stack overview and get-started/sign-in CTAs.",
-  },
-  {
-    path: "/login",
-    label: "Sign in",
-    description: "Email/password login form.",
-  },
-  { path: "/register", label: "Sign up", description: "Create an account." },
-  {
-    path: "/dashboard",
-    label: "Dashboard",
-    description: "Protected page — redirects to /login without a session.",
-  },
-  {
-    path: "/account",
-    label: "Account",
-    description:
-      "Protected page — update profile, change password, delete account.",
-  },
-  {
-    path: "/notes",
-    label: "Notes",
-    description:
-      "Protected page — example CRUD resource (schema, API route, api-client, TanStack Query/Table).",
-  },
-  { path: "/routes", label: "Routes", description: "This page." },
-];
+const pageKeys = [
+  "",
+  "login",
+  "register",
+  "forgotPassword",
+  "resetPassword",
+  "dashboard",
+  "account",
+  "notes",
+  "routes",
+] as const;
+
+const pagePaths: Record<(typeof pageKeys)[number], string> = {
+  "": "/",
+  login: "/login",
+  register: "/register",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
+  dashboard: "/dashboard",
+  account: "/account",
+  notes: "/notes",
+  routes: "/routes",
+};
+
+const pageLabelKeys: Record<(typeof pageKeys)[number], string> = {
+  "": "home",
+  login: "login",
+  register: "register",
+  forgotPassword: "forgotPassword",
+  resetPassword: "resetPassword",
+  dashboard: "dashboard",
+  account: "account",
+  notes: "notes",
+  routes: "routes",
+};
 
 const apiRoutes = [
   {
@@ -54,36 +58,36 @@ const apiRoutes = [
   },
 ];
 
-export default function RoutesPage() {
+export default async function RoutesPage() {
+  const t = await getTranslations("routes");
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
-      <h1 className="text-2xl font-semibold">Routes</h1>
-      <p className="text-muted-foreground mt-2">
-        Every page and API route this template ships with.
-      </p>
+      <h1 className="text-2xl font-semibold">{t("title")}</h1>
+      <p className="text-muted-foreground mt-2">{t("subtitle")}</p>
 
-      <h2 className="mt-8 text-lg font-medium">Pages</h2>
+      <h2 className="mt-8 text-lg font-medium">{t("pagesHeading")}</h2>
       <div className="mt-3 flex flex-col divide-y rounded-xl border">
-        {pages.map((page) => (
+        {pageKeys.map((key) => (
           <Link
-            key={page.path}
-            href={page.path}
+            key={key || "home"}
+            href={pagePaths[key]}
             className="hover:bg-muted/50 flex flex-col gap-0.5 px-4 py-3 transition-colors"
           >
             <span className="font-medium">
-              {page.label}{" "}
+              {t(`labels.${pageLabelKeys[key]}`)}{" "}
               <code className="text-muted-foreground text-sm font-normal">
-                {page.path}
+                {pagePaths[key]}
               </code>
             </span>
             <span className="text-muted-foreground text-sm">
-              {page.description}
+              {key === "" ? t("home") : t(key)}
             </span>
           </Link>
         ))}
       </div>
 
-      <h2 className="mt-8 text-lg font-medium">API routes</h2>
+      <h2 className="mt-8 text-lg font-medium">{t("apiHeading")}</h2>
       <div className="mt-3 flex flex-col divide-y rounded-xl border">
         {apiRoutes.map((route) => (
           <div key={route.path} className="flex flex-col gap-0.5 px-4 py-3">

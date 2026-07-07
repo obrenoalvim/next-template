@@ -1,35 +1,68 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
-});
+type ValidationMessages = {
+  nameRequired: string;
+  emailRequired: string;
+  emailInvalid: string;
+  passwordRequired: string;
+  passwordMin: string;
+};
 
-export type LoginInput = z.infer<typeof loginSchema>;
+export function createLoginSchema(t: ValidationMessages) {
+  return z.object({
+    email: z.string().min(1, t.emailRequired).email(t.emailInvalid),
+    password: z.string().min(1, t.passwordRequired),
+  });
+}
 
-export const registerSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().min(1, "Email is required").email("Invalid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
+export type LoginInput = z.infer<ReturnType<typeof createLoginSchema>>;
 
-export type RegisterInput = z.infer<typeof registerSchema>;
+export function createRegisterSchema(t: ValidationMessages) {
+  return z.object({
+    name: z.string().min(1, t.nameRequired),
+    email: z.string().min(1, t.emailRequired).email(t.emailInvalid),
+    password: z.string().min(8, t.passwordMin),
+  });
+}
 
-export const updateProfileSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-});
+export type RegisterInput = z.infer<ReturnType<typeof createRegisterSchema>>;
 
-export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+export function createUpdateProfileSchema(
+  t: Pick<ValidationMessages, "nameRequired">
+) {
+  return z.object({
+    name: z.string().min(1, t.nameRequired),
+  });
+}
 
-export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z.string().min(8, "Password must be at least 8 characters"),
-});
+export type UpdateProfileInput = z.infer<
+  ReturnType<typeof createUpdateProfileSchema>
+>;
 
-export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+export function createChangePasswordSchema(
+  t: { currentPasswordRequired: string } & Pick<
+    ValidationMessages,
+    "passwordMin"
+  >
+) {
+  return z.object({
+    currentPassword: z.string().min(1, t.currentPasswordRequired),
+    newPassword: z.string().min(8, t.passwordMin),
+  });
+}
 
-export const deleteAccountSchema = z.object({
-  password: z.string().min(1, "Password is required"),
-});
+export type ChangePasswordInput = z.infer<
+  ReturnType<typeof createChangePasswordSchema>
+>;
 
-export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
+export function createDeleteAccountSchema(
+  t: Pick<ValidationMessages, "passwordRequired">
+) {
+  return z.object({
+    password: z.string().min(1, t.passwordRequired),
+  });
+}
+
+export type DeleteAccountInput = z.infer<
+  ReturnType<typeof createDeleteAccountSchema>
+>;

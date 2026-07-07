@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
+import { useRouter } from "@/i18n/navigation";
 import {
   updateUser,
   changePassword,
@@ -23,9 +24,9 @@ import {
   signOut,
 } from "@/lib/auth-client";
 import {
-  updateProfileSchema,
-  changePasswordSchema,
-  deleteAccountSchema,
+  createUpdateProfileSchema,
+  createChangePasswordSchema,
+  createDeleteAccountSchema,
   type UpdateProfileInput,
   type ChangePasswordInput,
   type DeleteAccountInput,
@@ -43,13 +44,17 @@ export function AccountForms({ name, email }: { name: string; email: string }) {
 
 function ProfileCard({ name, email }: { name: string; email: string }) {
   const router = useRouter();
+  const t = useTranslations("account.profile");
+  const tv = useTranslations("account.validation");
   const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<UpdateProfileInput>({
-    resolver: zodResolver(updateProfileSchema),
+    resolver: zodResolver(
+      createUpdateProfileSchema({ nameRequired: tv("nameRequired") })
+    ),
     defaultValues: { name },
   });
 
@@ -59,22 +64,22 @@ function ProfileCard({ name, email }: { name: string; email: string }) {
     setLoading(false);
 
     if (error) {
-      toast.error(error.message ?? "Could not update profile.");
+      toast.error(error.message ?? t("genericError"));
       return;
     }
-    toast.success("Profile updated.");
+    toast.success(t("success"));
     router.refresh();
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Profile</CardTitle>
+        <CardTitle>{t("title")}</CardTitle>
         <CardDescription>{email}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <CardContent className="flex flex-col gap-1.5">
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor="name">{t("name")}</Label>
           <Input id="name" {...register("name")} />
           {errors.name ? (
             <p className="text-destructive text-sm">{errors.name.message}</p>
@@ -82,7 +87,7 @@ function ProfileCard({ name, email }: { name: string; email: string }) {
         </CardContent>
         <CardFooter className="border-t-0 bg-transparent">
           <Button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save"}
+            {loading ? t("saving") : t("save")}
           </Button>
         </CardFooter>
       </form>
@@ -91,6 +96,8 @@ function ProfileCard({ name, email }: { name: string; email: string }) {
 }
 
 function PasswordCard() {
+  const t = useTranslations("account.password");
+  const tv = useTranslations("account.validation");
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -98,7 +105,12 @@ function PasswordCard() {
     reset,
     formState: { errors },
   } = useForm<ChangePasswordInput>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(
+      createChangePasswordSchema({
+        currentPasswordRequired: tv("currentPasswordRequired"),
+        passwordMin: tv("passwordMin"),
+      })
+    ),
   });
 
   async function onSubmit(values: ChangePasswordInput) {
@@ -110,25 +122,23 @@ function PasswordCard() {
     setLoading(false);
 
     if (error) {
-      toast.error(error.message ?? "Could not change password.");
+      toast.error(error.message ?? t("genericError"));
       return;
     }
-    toast.success("Password changed.");
+    toast.success(t("success"));
     reset();
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Password</CardTitle>
-        <CardDescription>
-          Changing your password signs you out of other sessions.
-        </CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("subtitle")}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="currentPassword">Current password</Label>
+            <Label htmlFor="currentPassword">{t("current")}</Label>
             <Input
               id="currentPassword"
               type="password"
@@ -142,7 +152,7 @@ function PasswordCard() {
             ) : null}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="newPassword">New password</Label>
+            <Label htmlFor="newPassword">{t("new")}</Label>
             <Input
               id="newPassword"
               type="password"
@@ -158,7 +168,7 @@ function PasswordCard() {
         </CardContent>
         <CardFooter className="border-t-0 bg-transparent">
           <Button type="submit" disabled={loading}>
-            {loading ? "Changing..." : "Change password"}
+            {loading ? t("submitting") : t("submit")}
           </Button>
         </CardFooter>
       </form>
@@ -168,13 +178,17 @@ function PasswordCard() {
 
 function DangerZoneCard() {
   const router = useRouter();
+  const t = useTranslations("account.danger");
+  const tv = useTranslations("account.validation");
   const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<DeleteAccountInput>({
-    resolver: zodResolver(deleteAccountSchema),
+    resolver: zodResolver(
+      createDeleteAccountSchema({ passwordRequired: tv("passwordRequired") })
+    ),
   });
 
   async function onSubmit(values: DeleteAccountInput) {
@@ -183,10 +197,10 @@ function DangerZoneCard() {
     setLoading(false);
 
     if (error) {
-      toast.error(error.message ?? "Could not delete account.");
+      toast.error(error.message ?? t("genericError"));
       return;
     }
-    toast.success("Account deleted.");
+    toast.success(t("success"));
     await signOut();
     router.push("/");
     router.refresh();
@@ -195,14 +209,12 @@ function DangerZoneCard() {
   return (
     <Card className="border-destructive/50">
       <CardHeader>
-        <CardTitle>Delete account</CardTitle>
-        <CardDescription>
-          This permanently deletes your account. There is no undo.
-        </CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("subtitle")}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <CardContent className="flex flex-col gap-1.5">
-          <Label htmlFor="delete-password">Password</Label>
+          <Label htmlFor="delete-password">{t("password")}</Label>
           <Input
             id="delete-password"
             type="password"
@@ -217,7 +229,7 @@ function DangerZoneCard() {
         </CardContent>
         <CardFooter className="border-t-0 bg-transparent">
           <Button type="submit" variant="destructive" disabled={loading}>
-            {loading ? "Deleting..." : "Delete account"}
+            {loading ? t("submitting") : t("submit")}
           </Button>
         </CardFooter>
       </form>

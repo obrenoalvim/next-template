@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -16,7 +17,7 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/lib/api-client";
 import {
-  createNoteSchema,
+  createNoteFormSchema,
   type CreateNoteInput,
   type Note,
 } from "@/lib/validations/note";
@@ -43,6 +44,7 @@ import {
 const columnHelper = createColumnHelper<Note>();
 
 export function NotesView() {
+  const t = useTranslations("notes");
   const queryClient = useQueryClient();
   const [sorting, setSorting] = useState<SortingState>([
     { id: "createdAt", desc: true },
@@ -57,18 +59,18 @@ export function NotesView() {
     mutationFn: (input: CreateNoteInput) => api.post<Note>("/api/notes", input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
-      toast.success("Note created.");
+      toast.success(t("created"));
     },
-    onError: () => toast.error("Could not create note."),
+    onError: () => toast.error(t("createError")),
   });
 
   const deleteNote = useMutation({
     mutationFn: (id: string) => api.delete(`/api/notes/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
-      toast.success("Note deleted.");
+      toast.success(t("deleted"));
     },
-    onError: () => toast.error("Could not delete note."),
+    onError: () => toast.error(t("deleteError")),
   });
 
   const {
@@ -76,16 +78,23 @@ export function NotesView() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CreateNoteInput>({ resolver: zodResolver(createNoteSchema) });
+  } = useForm<CreateNoteInput>({
+    resolver: zodResolver(
+      createNoteFormSchema({
+        titleRequired: t("validation.titleRequired"),
+        contentRequired: t("validation.contentRequired"),
+      })
+    ),
+  });
 
   function onSubmit(values: CreateNoteInput) {
     createNote.mutate(values, { onSuccess: () => reset() });
   }
 
   const columns = [
-    columnHelper.accessor("title", { header: "Title" }),
+    columnHelper.accessor("title", { header: t("columnTitle") }),
     columnHelper.accessor("content", {
-      header: "Content",
+      header: t("columnContent"),
       cell: (info) => (
         <span className="text-muted-foreground line-clamp-1">
           {info.getValue()}
@@ -93,7 +102,7 @@ export function NotesView() {
       ),
     }),
     columnHelper.accessor("createdAt", {
-      header: "Created",
+      header: t("columnCreated"),
       cell: (info) => new Date(info.getValue()).toLocaleDateString(),
     }),
     columnHelper.display({
@@ -102,7 +111,7 @@ export function NotesView() {
         <Button
           variant="ghost"
           size="icon-sm"
-          aria-label="Delete note"
+          aria-label={t("deleteAria")}
           onClick={() => deleteNote.mutate(row.original.id)}
         >
           <Trash2 className="text-destructive size-4" />
@@ -124,12 +133,12 @@ export function NotesView() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
-          <CardTitle>New note</CardTitle>
+          <CardTitle>{t("newNote")}</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">{t("titleLabel")}</Label>
               <Input id="title" {...register("title")} />
               {errors.title ? (
                 <p className="text-destructive text-sm">
@@ -138,7 +147,7 @@ export function NotesView() {
               ) : null}
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="content">Content</Label>
+              <Label htmlFor="content">{t("contentLabel")}</Label>
               <Textarea id="content" rows={3} {...register("content")} />
               {errors.content ? (
                 <p className="text-destructive text-sm">
@@ -149,7 +158,7 @@ export function NotesView() {
           </CardContent>
           <CardFooter className="border-t-0 bg-transparent">
             <Button type="submit" disabled={createNote.isPending}>
-              {createNote.isPending ? "Adding..." : "Add note"}
+              {createNote.isPending ? t("adding") : t("add")}
             </Button>
           </CardFooter>
         </form>
@@ -185,7 +194,7 @@ export function NotesView() {
                   colSpan={columns.length}
                   className="text-muted-foreground text-center"
                 >
-                  Loading...
+                  {t("loading")}
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows.length === 0 ? (
@@ -194,7 +203,7 @@ export function NotesView() {
                   colSpan={columns.length}
                   className="text-muted-foreground text-center"
                 >
-                  No notes yet.
+                  {t("empty")}
                 </TableCell>
               </TableRow>
             ) : (

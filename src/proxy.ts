@@ -1,25 +1,31 @@
+import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
+import { routing } from "@/i18n/routing";
+
+const intlMiddleware = createMiddleware(routing);
 
 const protectedPaths = ["/dashboard", "/account", "/notes"];
+const localePattern = new RegExp(`^/(${routing.locales.join("|")})(?=/|$)`);
 
-export function proxy(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const localeMatch = pathname.match(localePattern);
+  const locale = localeMatch?.[1] ?? routing.defaultLocale;
+  const pathWithoutLocale = pathname.replace(localePattern, "") || "/";
 
-  if (!protectedPaths.some((path) => pathname.startsWith(path))) {
-    return NextResponse.next();
+  const isProtected = protectedPaths.some((path) =>
+    pathWithoutLocale.startsWith(path)
+  );
+
+  if (isProtected && !getSessionCookie(request)) {
+    const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
+    return NextResponse.redirect(new URL(`${prefix}/login`, request.url));
   }
 
-  const sessionCookie = getSessionCookie(request);
-
-  if (!sessionCookie) {
-    const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return NextResponse.next();
+  return intlMiddleware(request);
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/account/:path*", "/notes/:path*"],
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };

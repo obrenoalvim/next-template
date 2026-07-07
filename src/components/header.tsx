@@ -1,32 +1,35 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import { Link, useRouter } from "@/i18n/navigation";
 import { signOut, useSession } from "@/lib/auth-client";
 
 export function Header() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
+  const t = useTranslations("nav");
 
   return (
     <header className="border-b">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="font-semibold">
-          next-template
+          {t("brand")}
         </Link>
 
         <nav className="flex items-center gap-3">
+          <LocaleSwitcher />
           <ThemeToggle />
           {isPending ? null : session ? (
             <>
               <Link href="/dashboard" className="text-sm">
-                Dashboard
+                {t("dashboard")}
               </Link>
               <Link href="/notes" className="text-sm">
-                Notes
+                {t("notes")}
               </Link>
               <Link
                 href="/account"
@@ -39,21 +42,21 @@ export function Header() {
                 size="sm"
                 onClick={async () => {
                   await signOut();
-                  toast.success("Signed out.");
+                  toast.success(t("signedOut"));
                   router.push("/");
                   router.refresh();
                 }}
               >
-                Sign out
+                {t("signOut")}
               </Button>
             </>
           ) : (
             <>
               <Link href="/login" className="text-sm">
-                Sign in
+                {t("signIn")}
               </Link>
               <Button size="sm" render={<Link href="/register" />}>
-                Sign up
+                {t("signUp")}
               </Button>
             </>
           )}

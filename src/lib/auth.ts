@@ -4,6 +4,8 @@ import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
+import { sendEmail } from "@/lib/email";
+import { resetPasswordEmail, verificationEmail } from "@/lib/email-templates";
 
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
@@ -19,6 +21,23 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Reset your password",
+        html: resetPasswordEmail(url),
+      });
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Verify your email",
+        html: verificationEmail(url),
+      });
+    },
   },
   user: {
     deleteUser: {
