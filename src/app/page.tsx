@@ -1,65 +1,86 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Boxes, KeyRound, Layers } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const stack = [
+  "Next.js 16",
+  "TypeScript",
+  "Tailwind v4",
+  "shadcn/ui",
+  "Postgres",
+  "Drizzle",
+  "Better Auth",
+  "Docker",
+];
+
+const features = [
+  {
+    icon: KeyRound,
+    title: "Auth built in",
+    description:
+      "Email/password login with Better Auth, sessions, and a protected route example.",
+  },
+  {
+    icon: Layers,
+    title: "Real database",
+    description:
+      "Postgres + Drizzle ORM, schema and migrations ready to extend.",
+  },
+  {
+    icon: Boxes,
+    title: "Runs in Docker",
+    description:
+      "App and database both containerized — clone, migrate, and go.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-1 flex-col items-center px-4 py-20">
+      <div className="flex max-w-2xl flex-col items-center gap-6 text-center">
+        <span className="text-muted-foreground rounded-full border px-3 py-1 text-xs">
+          Base template
+        </span>
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+          next-template
+        </h1>
+        <p className="text-muted-foreground max-w-lg text-lg">
+          A pre-wired starting point for new projects: auth, a real database,
+          and Docker already configured so you can skip the setup and start
+          building.
+        </p>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button size="lg" render={<Link href="/register" />}>
+            Get started
+          </Button>
+          <Button size="lg" variant="outline" render={<Link href="/login" />}>
+            Sign in
+          </Button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 transition-colors hover:bg-[#383838] md:w-[158px] dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="text-muted-foreground flex flex-wrap items-center justify-center gap-x-3 gap-y-1 pt-2 text-xs">
+          {stack.map((item, i) => (
+            <span key={item} className="flex items-center gap-3">
+              {item}
+              {i < stack.length - 1 ? (
+                <span className="text-border">·</span>
+              ) : null}
+            </span>
+          ))}
         </div>
-      </main>
+      </div>
+
+      <div className="mt-16 grid w-full max-w-3xl gap-6 sm:grid-cols-3">
+        {features.map(({ icon: Icon, title, description }) => (
+          <div
+            key={title}
+            className="flex flex-col gap-2 rounded-xl border p-5"
+          >
+            <Icon className="text-primary size-5" />
+            <h2 className="font-medium">{title}</h2>
+            <p className="text-muted-foreground text-sm">{description}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
