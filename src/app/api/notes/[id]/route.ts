@@ -6,6 +6,27 @@ import { db } from "@/db";
 import { note } from "@/db/schema";
 import { logger } from "@/lib/logger";
 
+/**
+ * @swagger
+ * /api/notes/{id}:
+ *   delete:
+ *     summary: Delete a note
+ *     tags: [Notes]
+ *     security: [{ sessionCookie: [] }]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Note deleted
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Note not found
+ */
 export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }

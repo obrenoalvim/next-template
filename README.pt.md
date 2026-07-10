@@ -183,6 +183,15 @@ npm run db:studio     # navega os dados no Drizzle Studio
 
 `/notes` (`src/app/[locale]/notes`, `src/app/api/notes`) é uma implementação de referência completa do padrão schema → rota de API → `api-client` → TanStack Query/Table: uma tabela Drizzle pertencente ao usuário atual, uma rota de API validada com Zod, e uma view client com criar/ordenar/excluir. Copia esse formato pra sua primeira feature de verdade, depois apaga `/notes` (e a tabela `note` de `src/db/schema.ts` + gera uma migration) quando não precisar mais da referência.
 
+## Documentação da API
+
+Dois docs OpenAPI separados, já que o Better Auth gera o próprio:
+
+- **Rotas de auth** (`/api/auth/*`): o plugin nativo [`openAPI()`](https://www.better-auth.com/docs/plugins/open-api) do Better Auth (ligado em `src/lib/auth.ts`) documenta cada endpoint de auth automaticamente. Com o app rodando, abre `http://localhost:3000/api/auth/reference` pra UI interativa (Scalar), ou `http://localhost:3000/api/auth/open-api/generate-schema` pro spec bruto.
+- **Rotas do app** (`/api/notes`, `/api/health`): documentadas via comentários JSDoc `@swagger` em cada route handler, compilados pelo `swagger-jsdoc` (`src/lib/openapi.ts`). Spec bruto em `http://localhost:3000/api/openapi`, UI interativa em `http://localhost:3000/api-docs`. Ao adicionar uma rota, adiciona um bloco `@swagger` correspondente acima do handler — `src/app/api/notes/route.ts` é o padrão pra copiar.
+
+`swagger-jsdoc` lê os arquivos fonte das rotas em tempo de request, o que funciona em dev e depois de `next build && next start` (verificado), mas pode não funcionar em deploys edge/serverless que não embarcam os `.ts` fonte — confere o output file tracing do teu alvo antes de depender disso nesse tipo de deploy.
+
 ## SEO
 
 `src/app/[locale]/layout.tsx` seta `metadataBase`, tags OpenGraph/Twitter, e um bloco JSON-LD via `generateMetadata`, tudo derivado de `NEXT_PUBLIC_SITE_URL` (padrão `http://localhost:3000`) e título/descrição traduzidos por idioma. `src/app/robots.ts` e `src/app/sitemap.ts` são rotas de metadata do Next.js e consideram prefixos de idioma — adiciona novas páginas públicas no array `routes` de `sitemap.ts`. `src/app/opengraph-image.tsx` gera um PNG de verdade via `next/og`. `public/llms.txt` dá pra agentes de IA/ferramentas de IDE um resumo curto e estruturado do projeto.

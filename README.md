@@ -183,6 +183,15 @@ npm run db:studio     # browse data in Drizzle Studio
 
 `/notes` (`src/app/[locale]/notes`, `src/app/api/notes`) is a full reference implementation of the schema → API route → `api-client` → TanStack Query/Table pattern: a Drizzle table owned by the current user, a Zod-validated API route, and a client view with create/sort/delete. Copy this shape for your first real feature, then delete `/notes` (and drop the `note` table from `src/db/schema.ts` + generate a migration) once you don't need the reference.
 
+## API documentation
+
+Two separate OpenAPI docs, since Better Auth generates its own:
+
+- **Auth routes** (`/api/auth/*`): Better Auth's built-in [`openAPI()`](https://www.better-auth.com/docs/plugins/open-api) plugin (enabled in `src/lib/auth.ts`) auto-documents every auth endpoint. With the app running, open `http://localhost:3000/api/auth/reference` for the interactive (Scalar) UI, or `http://localhost:3000/api/auth/open-api/generate-schema` for the raw spec.
+- **App routes** (`/api/notes`, `/api/health`): documented via `@swagger` JSDoc comments on each route handler, compiled by `swagger-jsdoc` (`src/lib/openapi.ts`). Raw spec at `http://localhost:3000/api/openapi`, interactive UI at `http://localhost:3000/api-docs`. When adding a route, add a matching `@swagger` block above the handler — `src/app/api/notes/route.ts` is the pattern to copy.
+
+`swagger-jsdoc` reads route source files at request time, which works in dev and after `next build && next start` (verified), but may not in edge/serverless deployments that don't ship raw `.ts` sources — check your target's output file tracing before relying on it in that kind of deploy.
+
 ## SEO
 
 `src/app/[locale]/layout.tsx` sets `metadataBase`, OpenGraph/Twitter tags, and a JSON-LD block via `generateMetadata`, all derived from `NEXT_PUBLIC_SITE_URL` (defaults to `http://localhost:3000`) and locale-aware translated title/description. `src/app/robots.ts` and `src/app/sitemap.ts` are Next.js metadata routes and account for locale prefixes — add new public pages to the `routes` array in `sitemap.ts`. `src/app/opengraph-image.tsx` generates a real PNG via `next/og`. `public/llms.txt` gives AI agents/IDE tools a short, structured summary of the project.
