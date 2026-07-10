@@ -31,6 +31,11 @@ export function Header() {
               <Link href="/notes" className="text-sm">
                 {t("notes")}
               </Link>
+              {session.user.role === "admin" && (
+                <Link href="/admin" className="text-sm">
+                  {t("admin")}
+                </Link>
+              )}
               <Link
                 href="/account"
                 className="text-muted-foreground hover:text-foreground text-sm"

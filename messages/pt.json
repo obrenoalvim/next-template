@@ -7,6 +7,7 @@
     "brand": "next-template",
     "dashboard": "Painel",
     "notes": "Notas",
+    "admin": "Admin",
     "signIn": "Entrar",
     "signUp": "Criar conta",
     "signOut": "Sair",
@@ -101,6 +102,13 @@
     "databaseUp": "Banco no ar",
     "databaseDown": "Banco fora do ar"
   },
+  "admin": {
+    "title": "Admin",
+    "subtitle": "Todos os usuários cadastrados.",
+    "email": "Email",
+    "role": "Role",
+    "banned": "Banido"
+  },
   "account": {
     "title": "Conta",
     "subtitle": "Gerencie seu perfil, senha e conta.",
@@ -175,6 +183,7 @@
       "dashboard": "Painel",
       "account": "Conta",
       "notes": "Notas",
+      "admin": "Admin",
       "routes": "Rotas"
     },
     "thisPage": "Esta página.",
@@ -185,7 +194,8 @@
     "resetPassword": "Definir nova senha a partir do link enviado por email (?token=).",
     "dashboard": "Página protegida — redireciona pra /login sem sessão.",
     "account": "Página protegida — atualizar perfil, trocar senha, excluir conta.",
-    "notes": "Página protegida — recurso CRUD de exemplo (schema, rota de API, api-client, TanStack Query/Table)."
+    "notes": "Página protegida — recurso CRUD de exemplo (schema, rota de API, api-client, TanStack Query/Table).",
+    "admin": "Página admin-only — redireciona quem não é admin. Lista todos os usuários via plugin admin do Better Auth."
   },
   "notFound": {
     "label": "404",

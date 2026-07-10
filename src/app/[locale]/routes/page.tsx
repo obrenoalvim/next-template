@@ -10,6 +10,7 @@ const pageKeys = [
   "dashboard",
   "account",
   "notes",
+  "admin",
   "routes",
 ] as const;
 
@@ -22,6 +23,7 @@ const pagePaths: Record<(typeof pageKeys)[number], string> = {
   dashboard: "/dashboard",
   account: "/account",
   notes: "/notes",
+  admin: "/admin",
   routes: "/routes",
 };
 
@@ -34,6 +36,7 @@ const pageLabelKeys: Record<(typeof pageKeys)[number], string> = {
   dashboard: "dashboard",
   account: "account",
   notes: "notes",
+  admin: "admin",
   routes: "routes",
 };
 

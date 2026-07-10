@@ -7,6 +7,7 @@
     "brand": "next-template",
     "dashboard": "Dashboard",
     "notes": "Notes",
+    "admin": "Admin",
     "signIn": "Sign in",
     "signUp": "Sign up",
     "signOut": "Sign out",
@@ -101,6 +102,13 @@
     "databaseUp": "Database up",
     "databaseDown": "Database down"
   },
+  "admin": {
+    "title": "Admin",
+    "subtitle": "All registered users.",
+    "email": "Email",
+    "role": "Role",
+    "banned": "Banned"
+  },
   "account": {
     "title": "Account",
     "subtitle": "Manage your profile, password, and account.",
@@ -175,6 +183,7 @@
       "dashboard": "Dashboard",
       "account": "Account",
       "notes": "Notes",
+      "admin": "Admin",
       "routes": "Routes"
     },
     "thisPage": "This page.",
@@ -185,7 +194,8 @@
     "resetPassword": "Set a new password from the emailed reset link (?token=).",
     "dashboard": "Protected page — redirects to /login without a session.",
     "account": "Protected page — update profile, change password, delete account.",
-    "notes": "Protected page — example CRUD resource (schema, API route, api-client, TanStack Query/Table)."
+    "notes": "Protected page — example CRUD resource (schema, API route, api-client, TanStack Query/Table).",
+    "admin": "Admin-only page — redirects non-admins. Lists every user via Better Auth's admin plugin."
   },
   "notFound": {
     "label": "404",

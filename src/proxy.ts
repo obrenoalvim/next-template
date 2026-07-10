@@ -5,7 +5,7 @@ import { routing } from "@/i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-const protectedPaths = ["/dashboard", "/account", "/notes"];
+const protectedPaths = ["/dashboard", "/account", "/notes", "/admin"];
 const localePattern = new RegExp(`^/(${routing.locales.join("|")})(?=/|$)`);
 
 export default function proxy(request: NextRequest) {

@@ -153,7 +153,11 @@ Better Auth configurado com provider email/senha (`src/lib/auth.ts` no servidor,
 - `/api/auth/[...all]` — handler de rota do Better Auth
 - Rate limited: 5 tentativas de login/cadastro por 60s por IP (ver `rateLimit` em `src/lib/auth.ts`)
 - `/routes` lista toda página e rota de API do template
-- `src/proxy.ts` (substituto do `middleware.ts` no Next.js 16) protege centralmente `/dashboard`, `/account`, `/notes` — adiciona um caminho em `protectedPaths` e já tá coberto, sem redirect por página. É uma checagem otimista de cookie pra UX; as páginas ainda chamam `auth.api.getSession()` no servidor como o gate real. Também roda o middleware de locale do next-intl na mesma passada.
+- `src/proxy.ts` (substituto do `middleware.ts` no Next.js 16) protege centralmente `/dashboard`, `/account`, `/notes`, `/admin` — adiciona um caminho em `protectedPaths` e já tá coberto, sem redirect por página. É uma checagem otimista de cookie pra UX; as páginas ainda chamam `auth.api.getSession()` no servidor como o gate real. Também roda o middleware de locale do next-intl na mesma passada.
+
+## Roles
+
+Todo usuário tem um `role` (`'user'` | `'admin'`, default `'user'`) via o plugin nativo [`admin()`](https://www.better-auth.com/docs/plugins/admin) do Better Auth (`src/lib/auth.ts` no servidor, `adminClient()` em `src/lib/auth-client.ts` no client) — nunca confia num `role` vindo do body da requisição. `/admin` (`src/app/[locale]/admin/page.tsx`) é a referência pra uma página admin-only: ela re-checa `session.user.role === "admin"` no servidor e redireciona senão (a entrada no `proxy.ts` acima é só uma checagem otimista de UX, mesma ressalva dos outros caminhos protegidos). Ela lista todos os usuários via `auth.api.listUsers()` do próprio plugin — sem endpoint customizado. Sem promoção self-serve — muda a coluna direto no banco (`UPDATE "user" SET role = 'admin' WHERE email = '...'`) pra testar localmente.
 
 ## Email
 
