@@ -25,6 +25,7 @@ Production-ready base template for new projects: Next.js 16 (App Router), TypeSc
 - [Using this as a template](#using-this-as-a-template)
 - [Adding shadcn/ui components](#adding-shadcnui-components)
 - [Design notes and gotchas](#design-notes-and-gotchas)
+- [Contributing and license](#contributing-and-license)
 
 ## Stack
 
@@ -49,9 +50,9 @@ Production-ready base template for new projects: Next.js 16 (App Router), TypeSc
 - [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) — unit/component tests
 - [Playwright](https://playwright.dev) — E2E: auth flow, notes CRUD, locale switching
 - ESLint + Prettier (with `prettier-plugin-tailwindcss`)
-- Husky + lint-staged — lint/format on commit
+- Husky + lint-staged — lint/format on commit; commitlint enforces Conventional Commits on `commit-msg`
 - Docker + docker-compose — app and Postgres both containerized
-- GitHub Actions CI — build+lint+test, Docker image build, and a full E2E run against a real Postgres service container
+- GitHub Actions CI — `npm audit` (high-severity gate), build+lint+test, Docker image build, and a full E2E run against a real Postgres service container
 - SEO: `robots.ts`, `sitemap.ts`, OG/Twitter meta, dynamic OG image, JSON-LD, canonical URLs, `public/llms.txt`
 
 ## Project structure
@@ -97,6 +98,8 @@ e2e/
   auth.spec.ts, notes.spec.ts, i18n.spec.ts
 drizzle/                    # generated SQL migrations — commit these
 ```
+
+Requires Node 20.9+ (CI runs 22) and either Docker or a local Postgres instance.
 
 ## Getting started (Docker — recommended)
 
@@ -215,7 +218,7 @@ Two separate OpenAPI docs, since Better Auth generates its own:
 
 `.github/workflows/ci.yml` runs three jobs on every push/PR:
 
-1. **build** — `npm ci`, lint, format check, unit tests, `npm run build` (with build-time placeholder env vars, same reasoning as the Dockerfile below)
+1. **build** — `npm ci`, `npm audit --audit-level=high` (fails the build on high/critical vulnerabilities), lint, format check, unit tests, `npm run build` (with build-time placeholder env vars, same reasoning as the Dockerfile below)
 2. **docker** — builds the production Docker image (`docker/build-push-action`, no push) to catch Dockerfile breakage early
 3. **e2e** — spins up a real Postgres service container, migrates it, and runs the full Playwright suite against a built-and-started app
 
@@ -276,3 +279,9 @@ Things that weren't obvious while building this, kept here so they don't have to
 - **Playwright `workers: 2`, not the default (CPU count)**: the default suite is auth-heavy (bcrypt hashing on every sign-up/sign-in) running against a single-core-ish Docker container. Higher worker counts caused real, reproducible timeouts — not app bugs, just resource contention. Lower parallelism first before chasing a "flaky" auth test.
 - **Dependabot PRs for paired peer dependencies can't merge independently**: `react` and `react-dom` bumps arrived as separate PRs; merging one alone breaks `npm ci` (`react-dom@X` requires `react@^X`). Check `package.json` peer ranges before merging version-bump PRs that touch either half of a pair.
 - **ESLint major bumps aren't free**: bumping `eslint` past what `eslint-config-next`'s bundled `eslint-plugin-react` supports breaks linting outright (`contextOrFilename.getFilename is not a function`). Wait for the config package to catch up rather than forcing the bump.
+
+## Contributing and license
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow (fork, branch, `npm run lint && npm test && npm run build`, PR). Commit messages follow [Conventional Commits](https://www.conventionalcommits.org), enforced by commitlint on commit.
+
+MIT licensed — see [LICENSE](LICENSE).

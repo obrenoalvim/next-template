@@ -25,6 +25,7 @@ Template base pronto pra produção pra novos projetos: Next.js 16 (App Router),
 - [Usando isso como template](#usando-isso-como-template)
 - [Adicionando componentes shadcn/ui](#adicionando-componentes-shadcnui)
 - [Notas de design e pegadinhas](#notas-de-design-e-pegadinhas)
+- [Contribuindo e licença](#contribuindo-e-licença)
 
 ## Stack
 
@@ -49,9 +50,9 @@ Template base pronto pra produção pra novos projetos: Next.js 16 (App Router),
 - [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) — testes unitários/de componente
 - [Playwright](https://playwright.dev) — E2E: fluxo de auth, CRUD de notas, troca de idioma
 - ESLint + Prettier (com `prettier-plugin-tailwindcss`)
-- Husky + lint-staged — lint/format no commit
+- Husky + lint-staged — lint/format no commit; commitlint aplica Conventional Commits no `commit-msg`
 - Docker + docker-compose — app e Postgres containerizados
-- CI no GitHub Actions — build+lint+test, build da imagem Docker, e uma suíte E2E completa contra um Postgres real
+- CI no GitHub Actions — `npm audit` (gate de vulnerabilidade alta), build+lint+test, build da imagem Docker, e uma suíte E2E completa contra um Postgres real
 - SEO: `robots.ts`, `sitemap.ts`, meta OG/Twitter, imagem OG dinâmica, JSON-LD, URLs canônicas, `public/llms.txt`
 
 ## Estrutura do projeto
@@ -97,6 +98,8 @@ e2e/
   auth.spec.ts, notes.spec.ts, i18n.spec.ts
 drizzle/                    # migrations SQL geradas — commitar
 ```
+
+Requer Node 20.9+ (o CI roda na 22) e Docker ou uma instância Postgres local.
 
 ## Começando (Docker — recomendado)
 
@@ -215,7 +218,7 @@ Dois docs OpenAPI separados, já que o Better Auth gera o próprio:
 
 `.github/workflows/ci.yml` roda três jobs a cada push/PR:
 
-1. **build** — `npm ci`, lint, format check, testes unitários, `npm run build` (com env vars placeholder de build-time, mesmo motivo do Dockerfile abaixo)
+1. **build** — `npm ci`, `npm audit --audit-level=high` (quebra o build em vulnerabilidade alta/crítica), lint, format check, testes unitários, `npm run build` (com env vars placeholder de build-time, mesmo motivo do Dockerfile abaixo)
 2. **docker** — builda a imagem Docker de produção (`docker/build-push-action`, sem push) pra pegar quebra de Dockerfile cedo
 3. **e2e** — sobe um Postgres real como service container, migra, e roda a suíte Playwright completa contra o app buildado e rodando
 
@@ -276,3 +279,9 @@ Coisas que não eram óbvias construindo isso, guardadas aqui pra não precisar 
 - **Playwright `workers: 2`, não o padrão (contagem de CPU)**: a suíte é pesada em auth (hash bcrypt a cada cadastro/login) rodando contra um container Docker meio single-core. Contagem maior de workers causou timeouts reais e reproduzíveis — não bug de app, contenção de recurso mesmo. Reduz o paralelismo antes de sair caçando teste "flaky".
 - **PRs do Dependabot de dependências pareadas não mergeiam sozinhas**: bumps de `react` e `react-dom` chegaram como PRs separadas; mergear uma sozinha quebra `npm ci` (`react-dom@X` exige `react@^X`). Confere os ranges de peer dependency no `package.json` antes de mergear PR de bump de versão que mexe só numa metade do par.
 - **Bump major de ESLint não é de graça**: subir `eslint` além do que o `eslint-plugin-react` empacotado no `eslint-config-next` suporta quebra o lint de vez (`contextOrFilename.getFilename is not a function`). Espera o pacote de config se atualizar em vez de forçar o bump.
+
+## Contribuindo e licença
+
+Veja [CONTRIBUTING.md](CONTRIBUTING.md) pro workflow (fork, branch, `npm run lint && npm test && npm run build`, PR). Mensagens de commit seguem [Conventional Commits](https://www.conventionalcommits.org), aplicado pelo commitlint no commit.
+
+Licenciado sob MIT — veja [LICENSE](LICENSE).
