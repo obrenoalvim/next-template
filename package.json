@@ -70,7 +70,7 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@vitejs/plugin-react": "^6.0.3",
     "drizzle-kit": "^0.31.10",
-    "eslint": "^9",
+    "eslint": "^10",
     "eslint-config-next": "16.2.10",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
